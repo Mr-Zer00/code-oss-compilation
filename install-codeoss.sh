@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# Script de Instalação Completa do Code-OSS (Debian/Kali)
+# Script de Instalação Completa do Code-OSS (Baseado em Debian)
 # ------------------------------------------------------------------------------
 # Pergunta onde guardar o projeto, instala dependências, clona o repositório,
 # compila a última versão estável, empacota, instala e configura o marketplace.
