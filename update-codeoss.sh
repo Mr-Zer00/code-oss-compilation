@@ -5,6 +5,7 @@
 # Lê o diretório do projeto do ficheiro de configuração criado pelo script de
 # instalação. Se não existir, pergunta ao utilizador e guarda.
 # Depois atualiza o Code-OSS para a última versão estável.
+# -----------------------------By Mr-Zer00--------------------------------------
 # ==============================================================================
 set -eo pipefail
 
