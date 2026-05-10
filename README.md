@@ -62,3 +62,5 @@ Before running the scripts, install the following dependencies:
 ```bash
 git clone https://github.com/your-username/code-oss-compilation.git
 cd code-oss-compilation
+chmod +x install-codeoss.sh update-codeoss.sh
+./install-codeoss.sh
