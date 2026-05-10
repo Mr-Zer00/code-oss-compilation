@@ -6,8 +6,8 @@ Code - OSS is the open-source and telemetry-free version of Visual Studio Code.
 
 ## Included Scripts
 
-- `install.sh` → Downloads, compiles, and installs Code - OSS
-- `update.sh` → Updates the local installation
+- `install-codeoss.sh` → Downloads, compiles, and installs Code - OSS
+- `update-codeoss.sh` → Updates the local installation
 
 ## System Dependencies
 
