@@ -1,30 +1,64 @@
-# Code - OSS Compilation
+# code-oss-compilation
 
-Simple scripts to automatically compile, install, and update Code - OSS on Linux.
+A set of shell scripts to automatically download, compile, install, and update Code-OSS on Linux.
 
-Code - OSS is the open-source and telemetry-free version of Visual Studio Code.
+This project provides a fully automated way to build and maintain a telemetry-free version of Code-OSS from source.
 
-## Included Scripts
+> Code-OSS is the open-source version of Visual Studio Code maintained by Microsoft.
 
-- `install-codeoss.sh` → Downloads, compiles, and installs Code - OSS
-- `update-codeoss.sh` → Updates the local installation
+---
 
-## System Dependencies
+## ⚠️ Disclaimer
 
-Required packages:
+This project is not affiliated with Microsoft or the Visual Studio Code team.
+
+Code-OSS is distributed under the MIT License.
+
+
+---
+
+## 📦 What This Project Does
+
+This project provides two main scripts:
+
+- `install-codeoss.sh` → Compiles Code-OSS, and installs it automatically
+- `update-codeoss.sh` → Updates the existing installation and rebuilds when needed
+
+After the initial setup, everything is fully automated.
+
+---
+
+## 🧰 Requirements
+
+Before running the scripts, install the following dependencies:
+
+### System packages
+
+- build-essential
+- g++
+- libx11-dev
+- libxkbfile-dev
+- libsecret-1-dev
+- libkrb5-dev
+- python3
+- fakeroot
+- rpm
+- git
+- curl
+- wget
+
+### Node.js environment
+
+- nvm
+- Node.js 22
+- npm
+
+---
+
+## 🚀 Installation
+
+1. Clone this repository:
 
 ```bash
-build-essential
-g++
-libx11-dev
-libxkbfile-dev
-libsecret-1-dev
-libkrb5-dev
-python3
-fakeroot
-rpm
-git
-curl
-wget
-nvm
-npm
+git clone https://github.com/your-username/code-oss-compilation.git
+cd code-oss-compilation
