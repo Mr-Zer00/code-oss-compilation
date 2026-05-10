@@ -5,6 +5,7 @@
 # Pergunta onde guardar o projeto, instala dependências, clona o repositório,
 # compila a última versão estável, empacota, instala e configura o marketplace.
 # Guarda o caminho em ~/.config/code-oss-build.conf para o script de actualização.
+# -----------------------------By Mr-Zer00--------------------------------------
 # ==============================================================================
 set -eo pipefail
 
