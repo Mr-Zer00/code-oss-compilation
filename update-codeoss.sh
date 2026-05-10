@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# Script de Atualização do Code-OSS (Debian/Kali)
+# Script de Atualização do Code-OSS (Baseado em Debian)
 # ------------------------------------------------------------------------------
 # Lê o diretório do projeto do ficheiro de configuração criado pelo script de
 # instalação. Se não existir, pergunta ao utilizador e guarda.
