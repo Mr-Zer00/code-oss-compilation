@@ -4,7 +4,7 @@
 # ------------------------------------------------------------------------------
 # Lê o diretório do projeto do ficheiro de configuração criado pelo script de
 # instalação. Se não existir, pergunta ao utilizador e guarda.
-# Depois atualiza o Code-OSS para a última versão estável.
+# Atualiza o Code-OSS para a última versão estável sem alterar o marketplace.
 # -----------------------------By Mr-Zer00--------------------------------------
 # ==============================================================================
 set -eo pipefail
@@ -85,15 +85,12 @@ npm run gulp vscode-linux-x64
 # --------------------------------------------
 # 5. Correções pré‑empacotamento
 # --------------------------------------------
-# Remover @parcel/watcher musl
 MUSL_DIR="../VSCode-linux-x64/resources/app/node_modules/@parcel/watcher-linux-x64-musl"
 [ -d "$MUSL_DIR" ] && rm -rf "$MUSL_DIR" && info "Módulo musl removido."
 
-# Criar code-tunnel-oss dummy
 TUNNEL_BIN="../VSCode-linux-x64/bin/code-tunnel-oss"
 [ ! -f "$TUNNEL_BIN" ] && touch "$TUNNEL_BIN" && chmod +x "$TUNNEL_BIN" && info "Túnel dummy criado."
 
-# Atualizar dep-lists.ts
 DEP_FILE="build/linux/debian/dep-lists.ts"
 if [ -f "$DEP_FILE" ]; then
     info "Atualizando dep-lists.ts..."
@@ -135,26 +132,11 @@ sudo dpkg -i "$DEB_FILE"
 sudo apt install -f -y
 
 # --------------------------------------------
-# 7. Verificar e configurar marketplace (se ausente)
+# 7. Fim (marketplace mantido)
 # --------------------------------------------
-PRODUCT_JSON="/usr/share/code-oss/resources/app/product.json"
-if [ -f "$PRODUCT_JSON" ] && ! grep -q '"extensionsGallery"' "$PRODUCT_JSON"; then
-    info "Adicionando marketplace ao product.json..."
-    sudo python3 -c "
-import json
-with open('$PRODUCT_JSON', 'r') as f:
-    data = json.load(f)
-data['extensionsGallery'] = {
-    'serviceUrl': 'https://marketplace.visualstudio.com/_apis/public/gallery',
-    'cacheUrl': 'https://vscode.blob.core.windows.net/gallery/index',
-    'itemUrl': 'https://marketplace.visualstudio.com/items'
-}
-with open('$PRODUCT_JSON', 'w') as f:
-    json.dump(data, f, indent=8, ensure_ascii=False)
-"
-fi
 
 echo ""
 echo "========================================"
 echo -e "${GREEN}Code-OSS atualizado para $LATEST_TAG com sucesso!${NC}"
+echo "O marketplace permanece da instalação inicial."
 echo "========================================"
