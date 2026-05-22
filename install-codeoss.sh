@@ -3,8 +3,9 @@
 # Script de Instalação Completa do Code-OSS (Baseado em Debian)
 # ------------------------------------------------------------------------------
 # Pergunta onde guardar o projeto, instala dependências, clona o repositório,
-# compila a última versão estável, empacota, instala e configura o marketplace.
-# Guarda o caminho em ~/.config/code-oss-build.conf para o script de actualização.
+# compila a última versão estável, empacota, instala e configura o marketplace
+# escolhido pelo utilizador.
+# Guarda o caminho em ~/.config/code-oss-build.conf para o script de atualização.
 # -----------------------------By Mr-Zer00--------------------------------------
 # ==============================================================================
 set -eo pipefail
@@ -22,7 +23,7 @@ CONFIG_FILE="$HOME/.config/code-oss-build.conf"
 DEFAULT_DIR="$HOME/Downloads/compilar-code-oss"
 
 if [ -f "$CONFIG_FILE" ]; then
-    # Já existe uma configuração anterior, oferecer usar a mesma ou mudar
+    
     OLD_DIR=$(cat "$CONFIG_FILE")
     echo "Foi encontrada uma configuração anterior: $OLD_DIR"
     read -p "Usar o mesmo diretório? (S/n) " use_old
@@ -37,9 +38,7 @@ else
     PROJECT_DIR="${PROJECT_DIR:-$DEFAULT_DIR}"
 fi
 
-# Expande ~ se existir
 PROJECT_DIR="${PROJECT_DIR/#\~/$HOME}"
-# Guarda o caminho absoluto
 PROJECT_DIR="$(realpath -m "$PROJECT_DIR")"
 mkdir -p "$(dirname "$CONFIG_FILE")"
 echo "$PROJECT_DIR" > "$CONFIG_FILE"
@@ -118,14 +117,12 @@ npm run gulp vscode-linux-x64
 # --------------------------------------------
 info "Aplicando correções conhecidas..."
 
-# Remover módulo musl do @parcel/watcher
 MUSL_DIR="../VSCode-linux-x64/resources/app/node_modules/@parcel/watcher-linux-x64-musl"
 if [ -d "$MUSL_DIR" ]; then
     rm -rf "$MUSL_DIR"
     info "Módulo musl removido."
 fi
 
-# Criar code-tunnel-oss dummy
 TUNNEL_BIN="../VSCode-linux-x64/bin/code-tunnel-oss"
 if [ ! -f "$TUNNEL_BIN" ]; then
     touch "$TUNNEL_BIN"
@@ -133,7 +130,6 @@ if [ ! -f "$TUNNEL_BIN" ]; then
     info "Binário code-tunnel-oss dummy criado."
 fi
 
-# Atualizar lista de dependências em dep-lists.ts
 DEP_FILE="build/linux/debian/dep-lists.ts"
 if [ -f "$DEP_FILE" ]; then
     info "Atualizando automaticamente dep-lists.ts..."
@@ -183,29 +179,70 @@ sudo apt install -f -y
 # 8. Configurar marketplace (product.json)
 # --------------------------------------------
 PRODUCT_JSON="/usr/share/code-oss/resources/app/product.json"
+
+echo ""
+echo "============================================"
+echo " Escolha o marketplace de extensões:"
+echo " 1 - Microsoft Marketplace (oficial)"
+echo " 2 - Open VSX (open source)"
+echo "============================================"
+while true; do
+    read -p "Digite 1 ou 2: " market_choice
+    if [ "$market_choice" == "1" ]; then
+        SERVICE_URL="https://marketplace.visualstudio.com/_apis/public/gallery"
+        CACHE_URL="https://vscode.blob.core.windows.net/gallery/index"
+        ITEM_URL="https://marketplace.visualstudio.com/items"
+        MARKET_NAME="Microsoft Marketplace"
+        break
+    elif [ "$market_choice" == "2" ]; then
+        SERVICE_URL="https://open-vsx.org/vscode/gallery"
+        CACHE_URL=""
+        ITEM_URL="https://open-vsx.org/vscode/item"
+        MARKET_NAME="Open VSX"
+        break
+    else
+        warn "Opção inválida. Digite 1 ou 2."
+    fi
+done
+
 if [ -f "$PRODUCT_JSON" ]; then
-    if ! grep -q '"extensionsGallery"' "$PRODUCT_JSON"; then
-        info "Adicionando marketplace da Microsoft ao product.json..."
+    info "Configurando $MARKET_NAME no product.json..."
+    if [ -n "$CACHE_URL" ]; then
         sudo python3 -c "
 import json
 with open('$PRODUCT_JSON', 'r') as f:
     data = json.load(f)
 data['extensionsGallery'] = {
-    'serviceUrl': 'https://marketplace.visualstudio.com/_apis/public/gallery',
-    'cacheUrl': 'https://vscode.blob.core.windows.net/gallery/index',
-    'itemUrl': 'https://marketplace.visualstudio.com/items'
+    'serviceUrl': '$SERVICE_URL',
+    'cacheUrl': '$CACHE_URL',
+    'itemUrl': '$ITEM_URL'
 }
 with open('$PRODUCT_JSON', 'w') as f:
     json.dump(data, f, indent=8, ensure_ascii=False)
 "
-        info "Marketplace configurado."
     else
-        info "Marketplace já existe no product.json."
+        sudo python3 -c "
+import json
+with open('$PRODUCT_JSON', 'r') as f:
+    data = json.load(f)
+data['extensionsGallery'] = {
+    'serviceUrl': '$SERVICE_URL',
+    'itemUrl': '$ITEM_URL'
+}
+with open('$PRODUCT_JSON', 'w') as f:
+    json.dump(data, f, indent=8, ensure_ascii=False)
+"
     fi
+    info "Marketplace configurado com sucesso."
+else
+    warn "Ficheiro product.json não encontrado em $PRODUCT_JSON."
 fi
 
 echo ""
-echo "========================================"
+echo "============================================"
 echo -e "${GREEN}Code-OSS $LATEST_TAG instalado com sucesso!${NC}"
 echo "Execute 'code-oss' para iniciar."
-echo "========================================"
+echo ""
+echo "Para alterar o marketplace futuramente, edite o arquivo:"
+echo "  $PRODUCT_JSON"
+echo "============================================"
