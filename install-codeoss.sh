@@ -176,7 +176,7 @@ sudo dpkg -i "$DEB_FILE"
 sudo apt install -f -y
 
 # --------------------------------------------
-# 8. Configurar marketplace (product.json)
+# 8. Escolha do marketplace
 # --------------------------------------------
 PRODUCT_JSON="/usr/share/code-oss/resources/app/product.json"
 
